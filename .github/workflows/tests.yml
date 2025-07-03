@@ -44,6 +44,9 @@ jobs:
       - name: Copy Environment File
         run: cp .env.example .env
 
+      - name: Copy Testing Environment File
+        run: cp .env.example .env.testing
+
       - name: Generate Application Key
         run: php artisan key:generate
 
