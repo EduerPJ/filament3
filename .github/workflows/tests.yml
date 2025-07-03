@@ -47,6 +47,15 @@ jobs:
       - name: Copy Testing Environment File
         run: cp .env.example .env.testing
 
+      - name: Set absolute path for SQLite in .env.testing
+        run: |
+          echo "DB_CONNECTION=sqlite" > .env.testing
+          echo "DB_DATABASE=$(pwd)/database/testing.sqlite" >> .env.testing
+          grep -vE '^DB_CONNECTION=|^DB_DATABASE=' .env.example >> .env.testing
+
+      - name: Create SQLite testing database
+        run: mkdir -p database && touch database/testing.sqlite
+
       - name: Generate Application Key
         run: php artisan key:generate
 
