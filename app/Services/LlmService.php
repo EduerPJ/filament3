@@ -43,22 +43,4 @@ class LlmService
             ->asText()
             ->text;
     }
-
-    /**
-     * Generar texto con configuración personalizada
-     */
-    public function generateWithConfig(string $prompt, array $config = []): string
-    {
-        $provider = $config['provider'] ?? Provider::OpenAI;
-        $model = $config['model'] ?? Provider::OpenAI;
-        $providerConfig = $config['provider_config'] ?? [];
-
-        $prism = Prism::text()->using($provider, $model);
-
-        if (!empty($providerConfig)) {
-            $prism->usingProviderConfig($providerConfig);
-        }
-
-        return $prism->withPrompt($prompt)->asText()->text;
-    }
 }
