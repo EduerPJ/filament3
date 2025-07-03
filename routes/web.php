@@ -21,10 +21,19 @@ Route::middleware(['auth'])->group(function () {
     
     // Ruta para el componente de chat LLM
     Route::get('/chat', App\Livewire\ChatComponent::class)->name('chat');
+});
+
+// Grupo de rutas LLM con múltiples capas de seguridad
+Route::middleware(['auth', 'verified', 'llm.security'])->group(function () {
+    // Ruta para generación de contenido con rate limiting combinado
+    Route::post('/llm/generate', [LlmController::class, 'generateContent'])
+        ->middleware(['throttle:llm', 'throttle:llm-hourly', 'throttle:llm-daily'])
+        ->name('llm.generate');
     
-    // Rutas para el servicio LLM
-    Route::post('/llm/generate', [LlmController::class, 'generateContent'])->name('llm.generate');
-    Route::post('/llm/analyze', [LlmController::class, 'analyzeContent'])->name('llm.analyze');
+    // Ruta para análisis con rate limiting más estricto
+    Route::post('/llm/analyze', [LlmController::class, 'analyzeContent'])
+        ->middleware(['throttle:llm-analysis', 'throttle:llm-hourly', 'throttle:llm-daily'])
+        ->name('llm.analyze');
 });
 
 require __DIR__.'/auth.php';
